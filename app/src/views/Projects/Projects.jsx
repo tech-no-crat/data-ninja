@@ -99,7 +99,7 @@ class Dashboard extends React.Component {
     formdata.append('name', this.state.model_name);
     formdata.append('target', this.state.featuresMenu.selected);
     try {
-      await axios.post(`http://localhost:3001/project/${this.state.modelDialog.project_id}/models`, formdata, {
+      await axios.post(`http://localhost:3001/projects/${this.state.modelDialog.project_id}/models`, formdata, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -180,12 +180,12 @@ class Dashboard extends React.Component {
         {
           name: 'Model 1',
           id: 1,
-          column: 'Dropoff',
+          target: 'Dropoff',
         },
         {
           name: 'Model 2',
           id: 2,
-          column: 'Renew Subscription',
+          target: 'Renew Subscription',
         }
        ]
      },
@@ -198,12 +198,12 @@ class Dashboard extends React.Component {
         {
           name: 'Model 1',
           id: 3,
-          column: 'CTR',
+          target: 'CTR',
         },
         {
           name: 'Model 2',
           id: 4,
-          column: 'Conversion Rate'
+          target: 'Conversion Rate'
         }
        ]
      }
@@ -231,7 +231,7 @@ class Dashboard extends React.Component {
                       {item.models.map((item, index) => (
                         <TableRow key={index} hover className={classes.modelRow} onClick={this.handleModelClick.bind(this, item.id)}>
                           <TableCell>{item.name}</TableCell>
-                          <TableCell>{item.column}</TableCell>
+                          <TableCell>{item.target}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
