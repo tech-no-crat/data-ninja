@@ -1,0 +1,32 @@
+{
+  "name": "christos",
+  "version": "1.0.0",
+  "description": "Data Ninja",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tech-no-crat/data-ninja.git"
+  },
+  "keywords": [
+    "cosmote",
+    "hackathon",
+    "data",
+    "ninja",
+    "machine",
+    "learning",
+    "artificial",
+    "intelligence"
+  ],
+  "author": "Data Ninja Team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tech-no-crat/data-ninja/issues"
+  },
+  "homepage": "https://github.com/tech-no-crat/data-ninja#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
