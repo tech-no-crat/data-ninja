@@ -11,6 +11,12 @@ const dashboardStyle = {
   upArrowCardCategory: {
     width: 14,
     height: 14
+  },
+  modelsList: {
+    width: '100%',
+  },
+  modelRow: {
+    cursor: 'pointer'
   }
 };
 
