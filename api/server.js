@@ -44,6 +44,10 @@ app.post('/projects', (req, res) => {
   }).catch((e) => helpers.error(res, e, 500));
 });
 
+app.post('/projects/:id/models', (req, res) => {
+
+});
+
 var start = () => {
   app.listen(3001, () => console.log('Listening on port 3001!'));
 

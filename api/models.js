@@ -63,7 +63,7 @@ class DataSpec {
   constructor(data = []) {
     this.data = helpers.clone(data);
     if (this.data.length < 2) throw new Error('No data found.');
-    this.featureNames = this.data.shift();
+    this.featureNames = this.data.shift().map((name) => name.trim());
 
     if (this.featureNames.length < 2) {
       throw new Error('Need at least 2 features, found ' + this.featureNames.length);
@@ -106,7 +106,6 @@ class Project {
 
   // Returns a 2D array with the CSV data as strings
   readData() {
-    console.log(this.fullPath());
     return parse(fs.readFileSync(this.fullPath()));
   }
 
@@ -118,7 +117,8 @@ class Project {
 
   view() {
     return {
-      name: this.name
+      name: this.name,
+      features: this.dataSpec.featureNames
     };
   }
 }
