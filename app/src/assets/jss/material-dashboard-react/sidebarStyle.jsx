@@ -88,6 +88,9 @@ const sidebarStyle = theme => ({
     marginLeft: "10px",
     marginRight: "15px"
   },
+  hiddenLink: {
+    display: 'none !important'
+  },
   img: {
     height: "30px",
     top: "20px",
@@ -113,7 +116,7 @@ const sidebarStyle = theme => ({
       content: '""',
       display: "block",
       background: "#000",
-      opacity: ".7"
+      opacity: ".8"
     }
   },
   list: {
