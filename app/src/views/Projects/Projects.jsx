@@ -41,7 +41,21 @@ class Dashboard extends React.Component {
     dataset: null,
     project_name: null,
     model_name: null,
+    projects: null,
   };
+
+  componentWillUnmount() {
+    clearInterval(this.fetchDataInterval);
+  }
+
+  componentDidMount() {
+    this.fetchDataInterval = setInterval(async () => {
+      const { data } = await axios.get('http://localhost:3001/projects');
+      if (JSON.stringify(data) !== JSON.stringify(this.state.projects) && data.length) {
+        this.setState({projects: data});
+      }
+    }, 2000);
+  }
 
   handleFeaturesOption = value => {
     const state = this.state;
@@ -156,7 +170,7 @@ class Dashboard extends React.Component {
   render() {
     const { classes } = this.props;
 
-    const data = [
+    const data = this.state.projects || [
      {
        name: 'What\'s UP Client Retention',
        id: 11,
