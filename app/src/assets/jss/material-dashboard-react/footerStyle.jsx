@@ -2,7 +2,7 @@
 // // // Footer styles
 // #############################
 
-import { defaultFont, container, primaryColor } from "assets/jss/material-dashboard-react.jsx";
+import { defaultFont, container } from "assets/jss/material-dashboard-react.jsx";
 
 const footerStyle = {
   block: {
@@ -35,7 +35,8 @@ const footerStyle = {
   },
   container,
   a: {
-    color: primaryColor,
+    color: '#000',
+    fontWeight: 'bold',
     textDecoration: "none",
     backgroundColor: "transparent"
   },
