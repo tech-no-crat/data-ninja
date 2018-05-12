@@ -1,4 +1,4 @@
-import DashboardPage from "views/Dashboard/Dashboard.jsx";
+import ProjectsPage from "views/Projects/Projects.jsx";
 import ModelsPage from "views/Models/Models.jsx";
 import UserProfile from "views/Dashboard/Dashboard.jsx";
 
@@ -13,7 +13,7 @@ const dashboardRoutes = [
     sidebarName: "Projects",
     navbarName: "Projects",
     icon: Extension,
-    component: DashboardPage
+    component: ProjectsPage
   },
   {
     path: "/pricing",
