@@ -185,7 +185,6 @@ class Dashboard extends React.Component {
      {
        name: 'What\'s UP Client Retention',
        id: 11,
-       models_count: 1,
        features: ['foo1', 'bar2', 'a column'],
        models: [
         {
@@ -203,7 +202,6 @@ class Dashboard extends React.Component {
      {
        name: 'Cosmote 500MB Campaign',
        id: 22,
-       models_count: 2,
        features: ['foo1', 'bar2', 'a column'],
        models: [
         {
@@ -228,7 +226,7 @@ class Dashboard extends React.Component {
               <ExpansionPanel key={index}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>{item.name}</Typography>
-                  <Typography className={classes.secondaryHeading}>Models: {item.models_count}</Typography>
+                  <Typography className={classes.secondaryHeading}>Models: {item.models.length}</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Table className={classes.table}>
