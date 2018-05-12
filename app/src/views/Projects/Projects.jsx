@@ -7,6 +7,7 @@ import {
 } from "components";
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import TextField from 'material-ui/TextField';
+import Menu, { MenuItem } from 'material-ui/Menu';
 import Dialog, { DialogTitle } from 'material-ui/Dialog';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
@@ -29,12 +30,38 @@ class Dashboard extends React.Component {
       open: false
     },
     modelDialog: {
-      open: false
+      open: false,
+      project_id: null,
+    },
+    featuresMenu: {
+      open: false,
+      anchor: null,
+      selected: null
     },
     dataset: null,
     project_name: null,
     model_name: null,
   };
+
+  handleFeaturesOption = value => {
+    const state = this.state;
+    state.featuresMenu.selected = value;
+    state.featuresMenu.open = false;
+    this.setState(state);
+  }
+
+  handleFeaturesClose = () => {
+    const state = this.state;
+    state.featuresMenu.open = false;
+    this.setState(state);
+  }
+
+  openFeaturesMenu = event => {
+    const state = this.state;
+    state.featuresMenu.anchor = event.target;
+    state.featuresMenu.open = true;
+    this.setState(state);
+  }
 
   onDrop = files => {
     this.setState({dataset: files[0]});
@@ -46,6 +73,28 @@ class Dashboard extends React.Component {
 
   handleModelNameChange = event => {
     this.setState({model_name: event.target.value});
+  }
+
+  handleModelSubmit = async () => {
+    if (!this.state.featuresMenu.selected || !this.state.model_name) {
+      alert('Please provide model name and target column');
+      return;
+    }
+
+    const formdata = new FormData();
+    formdata.append('name', this.state.model_name);
+    formdata.append('target', this.state.featuresMenu.selected);
+    try {
+      await axios.post(`http://localhost:3001/project/${this.state.modelDialog.project_id}/models`, formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      this.handleModelDialogClose();
+    } catch (e) {
+      alert(e);
+    }
   }
 
   handleProjectSubmit = async () => {
@@ -94,10 +143,12 @@ class Dashboard extends React.Component {
     this.setState(state); 
   }
 
-  openModelDialog = () => {
+  openModelDialog = project_id => {
     const state = this.state;
     state.model_name = null;
+    state.featuresMenu.selected = null;
     state.modelDialog.open = true;
+    state.modelDialog.project_id = project_id
     this.setState(state); 
   }
 
@@ -107,6 +158,7 @@ class Dashboard extends React.Component {
     const data = [
      {
        name: 'What\'s UP Client Retention',
+       id: 11,
        models_count: 1,
        models: [
         {
@@ -123,6 +175,7 @@ class Dashboard extends React.Component {
      },
      {
        name: 'Cosmote 500MB Campaign',
+       id: 22,
        models_count: 2,
        models: [
         {
@@ -168,7 +221,7 @@ class Dashboard extends React.Component {
                   </Table>
                 </ExpansionPanelDetails>
                 <ExpansionPanelActions>
-                  <Button size="small" color="primary" onClick={this.openModelDialog}>
+                  <Button size="small" color="primary" onClick={this.openModelDialog.bind(this, item.id)}>
                     Create new model
                   </Button>
                 </ExpansionPanelActions>
@@ -217,6 +270,21 @@ class Dashboard extends React.Component {
               margin="normal"
               onChange={this.handleModelNameChange}
             />
+
+            <Button fullWidth variant='raised' onClick={this.openFeaturesMenu} className={classes.featuresButton}>
+              {this.state.featuresMenu.selected ?
+                this.state.featuresMenu.selected :
+                'Target Column'}
+            </Button>
+            <Menu
+              open={this.state.featuresMenu.open}
+              anchorEl={this.state.featuresMenu.anchor}
+              onClose={this.handleFeaturesClose}
+            >
+              <MenuItem onClick={this.handleFeaturesOption.bind(this, 'column1')}>column1</MenuItem>
+              <MenuItem onClick={this.handleFeaturesOption.bind(this, 'column2')}>column2</MenuItem>
+              <MenuItem onClick={this.handleFeaturesOption.bind(this, 'column3')}>column3</MenuItem>
+            </Menu>
 
             <Button variant="raised" color="primary" className={classes.submitButton} onClick={this.handleModelSubmit}>
               Create Model

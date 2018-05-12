@@ -32,6 +32,10 @@ const dashboardStyle = {
   table: {
     minWidth: '100%'
   },
+  featuresButton: {
+    background: '#fff',
+    marginTop: '20px',
+  },
   secondaryHeading: {
     color: '#888',
   },
