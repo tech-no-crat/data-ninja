@@ -2,6 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 // react plugin for creating charts
 import { withStyles, Grid } from "material-ui";
+import ChartistGraph from "react-chartist";
+import {
+  dailySalesChart,
+} from "variables/charts";
 
 import {
   ItemGrid
@@ -64,7 +68,7 @@ class Dashboard extends React.Component {
                       <TableRow>
                         <TableCell>Model Name</TableCell>
                         <TableCell>Column</TableCell>
-                        <TableCell>Some graph</TableCell>
+                        <TableCell>PR Curve</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -72,7 +76,16 @@ class Dashboard extends React.Component {
                         <TableRow key={index} hover className={classes.modelRow}>
                           <TableCell>{item.name}</TableCell>
                           <TableCell>{item.column}</TableCell>
-                          <TableCell>Graph</TableCell>
+                          <TableCell>
+                            <ChartistGraph
+                              className="ct-chart"
+                              data={dailySalesChart.data}
+                              type="Line"
+                              options={dailySalesChart.options}
+                              color="red"
+                              listener={dailySalesChart.animation}
+                            />
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
