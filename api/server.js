@@ -24,12 +24,14 @@ const getModelsForProject = (projectId) => {
   return models.filter((model) => model.projectId === projectId);
 }
 
+const viewProjectWithModels = (project) => {
+  let ret = project.view();
+  ret.models = getModelsForProject(project.id).map((m) => m.view());
+  return ret;
+};
+
 app.get('/projects', (req, res) => {
-  res.send(projects.map((p) => {
-    let ret = p.view();
-    ret.models = getModelsForProject(p.id).map((m) => m.view());
-    return ret;
-  }));
+  res.send(projects.map(viewProjectWithModels));
 });
 
 app.post('/projects', (req, res) => {
@@ -49,7 +51,7 @@ app.post('/projects', (req, res) => {
     projects.push(project);
 
     console.log(`Added project ${project.id} with name ${project.name}!`);
-    res.send("OK");
+    res.send(viewProjectWithModels(project));
   }).catch((e) => helpers.error(res, e, 500));
 });
 
