@@ -88,6 +88,9 @@ const sidebarStyle = theme => ({
     marginLeft: "10px",
     marginRight: "15px"
   },
+  hiddenLink: {
+    display: 'none !important'
+  },
   img: {
     height: "30px",
     top: "20px",

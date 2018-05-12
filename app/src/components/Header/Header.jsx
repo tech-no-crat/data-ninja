@@ -12,14 +12,14 @@ import headerStyle from "assets/jss/material-dashboard-react/headerStyle.jsx";
 
 function Header({ ...props }) {
   function makeBrand() {
-    var name;
+    var names = [];
     props.routes.map((prop, key) => {
-      if (prop.path === props.location.pathname) {
-        name = prop.navbarName;
+      if (props.location.pathname.includes(prop.path)) {
+        names.push(prop.navbarName);
       }
       return null;
     });
-    return name;
+    return names[0];
   }
   const { classes, color } = props;
   const appBarClasses = cx({

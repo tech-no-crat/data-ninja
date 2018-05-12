@@ -1,4 +1,5 @@
 import DashboardPage from "views/Dashboard/Dashboard.jsx";
+import ModelsPage from "views/Models/Models.jsx";
 import UserProfile from "views/Dashboard/Dashboard.jsx";
 
 import {
@@ -20,6 +21,14 @@ const dashboardRoutes = [
     navbarName: "Pricing",
     icon: AttachMoney,
     component: UserProfile
+  },
+  {
+    path: "/models/:id",
+    sidebarName: "Models",
+    navbarName: "Models",
+    icon: AttachMoney,
+    component: ModelsPage,
+    hidden: true,
   },
   { redirect: true, path: "/", to: "/projects", navbarName: "Redirect" }
 ];

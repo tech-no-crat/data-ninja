@@ -21,6 +21,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import dashboardStyle from "assets/jss/material-dashboard-react/dashboardStyle";
 
 class Dashboard extends React.Component {
+  handleModelClick = modelId => {
+    this.props.history.push(`/models/${modelId}`);
+  }
   render() {
     const { classes } = this.props;
 
@@ -30,10 +33,12 @@ class Dashboard extends React.Component {
        models: [
         {
           name: 'Model 1',
+          id: 1,
           column: 'Dropoff',
         },
         {
           name: 'Model 2',
+          id: 2,
           column: 'Renew Subscription',
         }
        ]
@@ -43,10 +48,12 @@ class Dashboard extends React.Component {
        models: [
         {
           name: 'Model 1',
+          id: 3,
           column: 'CTR',
         },
         {
           name: 'Model 2',
+          id: 4,
           column: 'Conversion Rate'
         }
        ]
@@ -73,7 +80,7 @@ class Dashboard extends React.Component {
                     </TableHead>
                     <TableBody>
                       {item.models.map((item, index) => (
-                        <TableRow key={index} hover className={classes.modelRow}>
+                        <TableRow key={index} hover className={classes.modelRow} onClick={this.handleModelClick.bind(this, item.id)}>
                           <TableCell>{item.name}</TableCell>
                           <TableCell>{item.column}</TableCell>
                           <TableCell>
