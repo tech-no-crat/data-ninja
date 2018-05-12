@@ -1,6 +1,8 @@
 class Project {
-  constructor(name) {
+  constructor(id, name, filePath) {
+    this.id = id;
     this.name = name;
+    this.filePath = filePath;
   }
 
   view() {
