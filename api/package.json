@@ -27,8 +27,14 @@
   },
   "homepage": "https://github.com/tech-no-crat/data-ninja#readme",
   "dependencies": {
+    "express": "^4.16.3",
+    "ml-cart": "^1.0.8",
     "body-parser": "^1.18.2",
+    "csv-parse": "^2.4.0",
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0"
+  },
+  "devDependencies": {
+    "should": "^13.2.1"
   }
 }

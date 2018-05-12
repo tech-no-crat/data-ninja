@@ -3,10 +3,9 @@ const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const path = require('path');
 
+const config = require('./config');
 const helpers = require('./helpers');
 const models = require('./models');
-
-const datasetsPath = './data/datasets/';
 
 const projects = [];
 
@@ -35,18 +34,24 @@ app.post('/projects', (req, res) => {
   }
 
   let fileName = helpers.randomString(5) + '.csv';
-  req.files.data.mv(path.join(datasetsPath, fileName)).then(() => {
-    projects.push(new models.Project(projects.length, name, fileName));
-    let project = projects[projects.length - 1];
+  req.files.data.mv(path.join(config.datasetsPath, fileName)).then(() => {
+    let project = new models.Project(projects.length, name, fileName);
+    projects.push(project);
+    project.init();
+
     console.log(`Added project ${project.id} with name ${project.name}!`);
     res.send("OK");
   }).catch((e) => helpers.error(res, e, 500));
 });
 
+app.post('/projects/:id/models', (req, res) => {
+
+});
+
 var start = () => {
   app.listen(3001, () => console.log('Listening on port 3001!'));
 
-  helpers.makeDirectory(datasetsPath);
+  helpers.makeDirectory(config.datasetsPath);
 
   populateWithDummyData();
 }
