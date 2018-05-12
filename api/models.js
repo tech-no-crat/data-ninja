@@ -98,7 +98,7 @@ class DataSpec {
 
     // Check that all rows have the same number of columns
     if (this.data.filter((row) => row.length == this.featureNames.length).length
-        < this.featureNames.length) {
+        < this.data.length) {
       throw new Error('Some data rows have fewer columns, expected ' + this.featureNames.length
           + ' columns in each row');
     }
