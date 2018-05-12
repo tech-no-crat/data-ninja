@@ -45,8 +45,8 @@ app.post('/projects', (req, res) => {
   let fileName = helpers.randomString(5) + '.csv';
   req.files.data.mv(path.join(config.datasetsPath, fileName)).then(() => {
     let project = new Project(projects.length, name, fileName);
-    projects.push(project);
     project.init();
+    projects.push(project);
 
     console.log(`Added project ${project.id} with name ${project.name}!`);
     res.send("OK");
