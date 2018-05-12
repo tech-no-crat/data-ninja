@@ -1,0 +1,4 @@
+{
+  "datasetsPath": "./data/datasets",
+  "dominantDataTypeThreshold": 0.8
+}
