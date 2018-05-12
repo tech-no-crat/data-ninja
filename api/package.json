@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/tech-no-crat/data-ninja#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "ml-cart": "^1.0.8"
   }
 }
