@@ -11,6 +11,8 @@ import {
   ItemGrid
 } from "components";
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import Button from 'material-ui/Button';
+import AddIcon from '@material-ui/icons/Add';
 import ExpansionPanel, {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
@@ -102,6 +104,9 @@ class Dashboard extends React.Component {
             ))}
           </ItemGrid>
         </Grid>
+        <Button variant="fab" color="primary" aria-label="add" className={classes.button}>
+          <AddIcon />
+        </Button>
       </div>
     );
   }

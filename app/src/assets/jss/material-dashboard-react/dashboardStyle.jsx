@@ -17,7 +17,10 @@ const dashboardStyle = {
   },
   modelRow: {
     cursor: 'pointer'
-  }
+  },
+  button: {
+    margin: '15px',
+  },
 };
 
 export default dashboardStyle;
