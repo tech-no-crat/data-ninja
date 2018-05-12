@@ -10,7 +10,6 @@ import TextField from 'material-ui/TextField';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Dialog, { DialogTitle } from 'material-ui/Dialog';
 import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
 import axios from 'axios';
 import Dropzone from 'react-dropzone'
 import AddIcon from '@material-ui/icons/Add';
@@ -36,7 +35,8 @@ class Dashboard extends React.Component {
     featuresMenu: {
       open: false,
       anchor: null,
-      selected: null
+      selected: null,
+      list: [],
     },
     dataset: null,
     project_name: null,
@@ -143,12 +143,13 @@ class Dashboard extends React.Component {
     this.setState(state); 
   }
 
-  openModelDialog = project_id => {
+  openModelDialog = (project_id, features) => {
     const state = this.state;
     state.model_name = null;
     state.featuresMenu.selected = null;
     state.modelDialog.open = true;
-    state.modelDialog.project_id = project_id
+    state.modelDialog.project_id = project_id;
+    state.featuresMenu.list = features;
     this.setState(state); 
   }
 
@@ -160,6 +161,7 @@ class Dashboard extends React.Component {
        name: 'What\'s UP Client Retention',
        id: 11,
        models_count: 1,
+       features: ['foo1', 'bar2', 'a column'],
        models: [
         {
           name: 'Model 1',
@@ -177,6 +179,7 @@ class Dashboard extends React.Component {
        name: 'Cosmote 500MB Campaign',
        id: 22,
        models_count: 2,
+       features: ['foo1', 'bar2', 'a column'],
        models: [
         {
           name: 'Model 1',
@@ -221,7 +224,7 @@ class Dashboard extends React.Component {
                   </Table>
                 </ExpansionPanelDetails>
                 <ExpansionPanelActions>
-                  <Button size="small" color="primary" onClick={this.openModelDialog.bind(this, item.id)}>
+                  <Button size="small" color="primary" onClick={this.openModelDialog.bind(this, item.id, item.features)}>
                     Create new model
                   </Button>
                 </ExpansionPanelActions>
@@ -281,9 +284,9 @@ class Dashboard extends React.Component {
               anchorEl={this.state.featuresMenu.anchor}
               onClose={this.handleFeaturesClose}
             >
-              <MenuItem onClick={this.handleFeaturesOption.bind(this, 'column1')}>column1</MenuItem>
-              <MenuItem onClick={this.handleFeaturesOption.bind(this, 'column2')}>column2</MenuItem>
-              <MenuItem onClick={this.handleFeaturesOption.bind(this, 'column3')}>column3</MenuItem>
+              {this.state.featuresMenu.list.map((item, index) => (
+                <MenuItem key={index} onClick={this.handleFeaturesOption.bind(this, item)}>{item}</MenuItem>
+              ))}
             </Menu>
 
             <Button variant="raised" color="primary" className={classes.submitButton} onClick={this.handleModelSubmit}>

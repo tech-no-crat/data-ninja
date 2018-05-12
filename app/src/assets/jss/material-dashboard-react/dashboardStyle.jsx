@@ -35,6 +35,7 @@ const dashboardStyle = {
   featuresButton: {
     background: '#fff',
     marginTop: '20px',
+    textTransform: 'none'
   },
   secondaryHeading: {
     color: '#888',
