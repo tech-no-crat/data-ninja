@@ -28,7 +28,11 @@
   "homepage": "https://github.com/tech-no-crat/data-ninja#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "csv-parse": "^2.4.0",
     "express": "^4.16.3",
     "express-fileupload": "^0.4.0"
+  },
+  "devDependencies": {
+    "should": "^13.2.1"
   }
 }

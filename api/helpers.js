@@ -17,6 +17,11 @@ module.exports = {
     execSync('mkdir -p ' + directoryName);
   },
 
-  randomString: (length = 10) =>
+  randomString: (length = 10) => {
     Array(length+1).join((Math.random().toString(36)+'00000000000000000').slice(2, 18)).slice(0, length)
+  },
+
+  clone: (x) => {
+    return JSON.parse(JSON.stringify(x));
+  } 
 }
