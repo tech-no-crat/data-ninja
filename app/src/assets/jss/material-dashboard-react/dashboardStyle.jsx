@@ -25,6 +25,21 @@ const dashboardStyle = {
     margin: '20px auto 0 auto',
     display: 'block',
   },
+  heading: {
+    flexBasis: '33.33%',
+    flexShrink: 0,
+  },
+  table: {
+    minWidth: '100%'
+  },
+  featuresButton: {
+    background: '#fff',
+    marginTop: '20px',
+    textTransform: 'none'
+  },
+  secondaryHeading: {
+    color: '#888',
+  },
   dialogContent: {
     padding: '0 20px 20px 20px'
   },
