@@ -6,12 +6,14 @@ import ChartistGraph from "react-chartist";
 import {
   dailySalesChart,
 } from "variables/charts";
-
 import {
   ItemGrid
 } from "components";
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import TextField from 'material-ui/TextField';
+import Dialog, { DialogTitle } from 'material-ui/Dialog';
 import Button from 'material-ui/Button';
+import Dropzone from 'react-dropzone'
 import AddIcon from '@material-ui/icons/Add';
 import ExpansionPanel, {
   ExpansionPanelSummary,
@@ -23,9 +25,31 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import dashboardStyle from "assets/jss/material-dashboard-react/dashboardStyle";
 
 class Dashboard extends React.Component {
+  state = {
+    dialog: {
+      open: false
+    }
+  };
+
+  onDrop() {
+  }
+
   handleModelClick = modelId => {
     this.props.history.push(`/models/${modelId}`);
   }
+
+  handleDialogClose = () => {
+    const state = this.state;
+    state.dialog.open = false;
+    this.setState(state); 
+  }
+
+  openDialog = () => {
+    const state = this.state;
+    state.dialog.open = true;
+    this.setState(state); 
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -104,9 +128,33 @@ class Dashboard extends React.Component {
             ))}
           </ItemGrid>
         </Grid>
-        <Button variant="fab" color="primary" aria-label="add" className={classes.button}>
+        <Button
+          variant="fab"
+          color="primary"
+          aria-label="add"
+          className={classes.button}
+          onClick={this.openDialog}
+        >
           <AddIcon />
         </Button>
+        <Dialog onClose={this.handleDialogClose} aria-labelledby="simple-dialog-title" open={this.state.dialog.open}>
+          <DialogTitle id="simple-dialog-title">Create a new project</DialogTitle>
+          <div className={classes.dialogContent}>
+            <TextField
+              label="Project Name"
+              fullWidth
+              margin="normal"
+            />
+            <div className={classes.dropzoneWrapper}>
+              <Dropzone onDrop={this.onDrop.bind(this)} >
+                <p>Drop your CSV Dataset file here or click to select the file to upload.</p>
+              </Dropzone>
+            </div>
+            <Button variant="raised" color="primary" className={classes.submitButton}>
+              Create Project
+            </Button>
+          </div>
+        </Dialog>
       </div>
     );
   }

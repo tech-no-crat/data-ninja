@@ -21,6 +21,26 @@ const dashboardStyle = {
   button: {
     margin: '15px',
   },
+  submitButton: {
+    margin: '20px auto 0 auto',
+    display: 'block',
+  },
+  dialogContent: {
+    padding: '0 20px 20px 20px'
+  },
+  dropzoneWrapper: {
+    '& > div': {
+      width: '100% !important',
+      height: '80px !important',
+      margin: '20px auto 0 auto',
+      '& > p': {
+        textAlign: 'center',
+        marginTop: '18px',
+        fontWeight: 'bold',
+        padding: '10px',
+      }
+    }
+  },
 };
 
 export default dashboardStyle;
