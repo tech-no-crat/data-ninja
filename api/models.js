@@ -158,6 +158,7 @@ class Project {
 
   view() {
     return {
+      id: this.id,
       name: this.name,
       features: this.dataSpec.featureNames
     };
