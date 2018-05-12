@@ -55,12 +55,27 @@ describe('DataSpec', () => {
     it ('correctly finds statistical characteristics of float features', () => {
       should.equal(dataSpec.featureSpecs['data_consumed'].min, 0);
       should.equal(dataSpec.featureSpecs['data_consumed'].max, 5429.3);
+      should.equal(dataSpec.featureSpecs['data_consumed'].median, 23.3);
       should.equal(dataSpec.featureSpecs['minutes_talked'].min, 34);
       should.equal(dataSpec.featureSpecs['minutes_talked'].max, 129);
+      should.equal(dataSpec.featureSpecs['minutes_talked'].median, 129);
       should.equal(dataSpec.featureSpecs['messages_sent'].min, 2);
       should.equal(dataSpec.featureSpecs['messages_sent'].max, 32);
+      should.equal(dataSpec.featureSpecs['messages_sent'].median, 32);
     });
 
+    it ('should correctly normalize features', () => {
+      var rawData = helpers.clone(sampleDataset);
+      rawData.shift();
+      should.deepEqual(dataSpec.normalize(rawData), [
+        [0.047556775274897316, 0, 0, 0, 1],
+        [0.0007588455233639695, 0.09473684210526316, 1, 0, 0],
+        [0.004291529294752547, 1, 1, 1, 0],
+        [0, 1, 1, 4, 0],
+        [1, 1, 1, 2, 0],
+        [0.004291529294752547, 1, 0.06666666666666667, 3, 1]
+      ]);
+    });
   });
 });
 

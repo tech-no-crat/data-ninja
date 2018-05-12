@@ -1,10 +1,9 @@
-var mlcart = require('ml-cart');
+const mlcart = require('ml-cart');
+const config = require('./config');
+const helpers = require('./helpers');
 
-var DecisionTreeTraining = function(data, target) {
-	// Defines the size of the test data in respect to the given data.
-	test_index = Math.ceil(data.length * 0.3);
-
-	console.log(test_index);
+var trainDecisionTree = (data, target) => {
+	test_index = Math.ceil(data.length * config.testSetPart);
 
 	testSet = data.slice(0, test_index);
 	trainingSet = data.slice(test_index, data.length);
@@ -13,41 +12,53 @@ var DecisionTreeTraining = function(data, target) {
 	trainingPredictions = target.slice(test_index, target.length);
 
 	// TODO: optimise input parameters.
-	// Optimise these parameters.
 	var options = {
 		gainFunction: 'gini',
 		maxDepth: 10,
 		minNumSamples: 3
 	};
 
-	var classifier = new mlcart.DecisionTreeClassifier(options);
-
+	let classifier = new mlcart.DecisionTreeClassifier(options);
 	classifier.train(trainingSet, trainingPredictions);
 
-	console.log(testSet);
+	let result = classifier.predict(testSet);
 
-	var result = classifier.predict(testSet);
-
-	console.log("Reached that point");
-
-	return [classifier, CalculateErrorRate(testPredictions, result)];
+	return {classifier, metrics: calculateMetrics(testPredictions, result)};
 };
 
-var CalculateErrorRate = function(classLabels, predictions) {
-	var misclassifications = 0;
-	for (var i = 0; i < predictions.length; i++) {
-		// Misclassification.
-		console.log(predictions[i], classLabels[i]);
+var calculateMetrics = (observations, predictions, positiveClass = 1) => {
+  if (observations.length !== predictions.length) {
+    throw new Error('Expected observations and predictions to have the same length, but lengths ' +
+        'were ' + observations.length + ' and ' + predictions.length + ' correspondingly');
+  }
 
-		if (predictions[i] != classLabels[i]) {
-			misclassifications++;
-		} 
-	}
+	var metrics = {
+    total: predictions.length,
+    truePositives: 0,
+    falsePositives: 0,
+    trueNegatives: 0,
+    falseNegatives: 0
+  }
 
-	console.log(misclassifications);
-	console.log(predictions.length);
+  for (let i = 0; i < predictions.length; i++) {
+    let observation = observations[i];
+    let prediction = predictions[i];
+    if (observation === positiveClass && prediction === positiveClass) {
+      metrics.truePositives++;
+    } else if (observation !== positiveClass && prediction === positiveClass) {
+      metrics.falseNegatives++;
+    } else if (observation === positiveClass && prediction !== positiveClass) {
+      metrics.falsePositives++;
+    } else {
+      metrics.trueNegatives++;
+    }
+  }
 
-	return misclassifications / predictions.length;
+  metrics.recall = metrics.truePositives / (metrics.truePositives + metrics.falseNegatives);
+  metrics.precision = metrics.truePositives / (metrics.truePositives + metrics.falsePositives);
+  metrics.accuracy = (metrics.truePositives + metrics.trueNegatives) / metrics.total;
+  return metrics;
 }
-exports.CalculateErrorRate = CalculateErrorRate;
-exports.DecisionTreeTraining = DecisionTreeTraining;
+
+exports.calculateMetrics = calculateMetrics;
+exports.trainDecisionTree = trainDecisionTree;

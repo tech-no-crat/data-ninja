@@ -1,9 +1,10 @@
-const var mlcart = require('ml-cart');
+const mlcart = require('ml-cart');
 const parse = require('csv-parse/lib/sync');
 const path = require('path');
 const fs = require('fs');
 const config = require('./config');
 const helpers = require('./helpers');
+const mlTrainer = require('./ml_training.js');
 
 // Class for generating and interacting with feature descriptions.
 class FeatureSpec {
@@ -22,6 +23,8 @@ class FeatureSpec {
     this.missingCount = this.values.filter((x) => isNaN(parseFloat(x))).length
     this.min = this.values.reduce((acc, x) => (x < acc) ? x : acc);
     this.max = this.values.reduce((acc, x) => (x > acc) ? x : acc);
+    let existingValues = this.values.filter((x) => !isNaN(x));
+    this.median = existingValues.sort((x, y) => x > y)[Math.floor(existingValues.length / 2)]
   }
 
   generateStringSpec() {
@@ -32,6 +35,7 @@ class FeatureSpec {
       if (!count.has(value)) count.set(value, 0);
       count.set(value, count.get(value) + 1);
     }
+    this.vocabSize = count.size;
 
     this.vocab = new Map();
     Array.from(count).sort((x, y) => x[1] < y[1])
@@ -53,6 +57,29 @@ class FeatureSpec {
     }
 
     return 'string';
+  }
+
+  normalizeString() {
+    return this.values.map((x) => {
+      if (!this.vocab.has(x)) {
+        return this.vocabSize;
+      }
+      return this.vocab.get(x);
+    });
+  }
+  
+  normalizeFloat() {
+    return this.values.map((x) => {
+      if (isNaN(x)) x = this.median;
+      x = parseFloat(x);
+      return (x - this.min) / (this.max - this.min);
+    });
+  }
+
+  normalize() {
+    if (this.type === 'string') return this.normalizeString();
+    else if (this.type === 'float') return this.normalizeFloat();
+    else throw new Error('Unknown type ' + this.type);
   }
 }
 
@@ -90,6 +117,12 @@ class DataSpec {
 
     return this.data.map((example) => example[featureIndex]);
   }
+
+  normalize(data) {
+    return helpers.transpose(helpers.transpose(data).map((featureValues, featureIndex) => {
+      return this.featureSpecs[this.featureNames[featureIndex]].normalize(featureValues);
+    }));
+  }
 }
 
 class Project {
@@ -115,6 +148,14 @@ class Project {
     this.dataSpec = new DataSpec(data);
   }
 
+  getRawData() {
+    return this.dataSpec.data;
+  }
+
+  getFeatureIndex(featureName) {
+    return this.dataSpec.featureNames.indexOf(featureName);
+  }
+
   view() {
     return {
       name: this.name,
@@ -124,33 +165,40 @@ class Project {
 }
 
 class Model {
-  constructor(project_id, data, target_index) {
-    this.project_id = project_id;
-    var trained_model = this.train_model(data, target_index);
-    this.classifier = trained_model[0];
-    this.error_rate = trained_model[1];
-  }2
-
-  train_model(data, target_index) {
-    var mlTrainer = require('./ml_training.js');
-    var targets = [];
-
-    data.forEach(function(elem) {
-      targets.push(elem.splice(target_index));
-    })
-
-    return mlTrainer.DecisionTreeTraining(data, targets);
+  constructor(id, projectId, name, data, target_index) {
+    this.id = id;
+    this.projectId = projectId;
+    this.name = name;
+    let {model, metrics} = this.trainModel(helpers.clone(data), target_index);
+    this.model = model;
+    this.metrics = metrics;
   }
 
-  predict(data, target_index) {
-    var mlTrainer = require('./ml_training.js');
-    targets = [];
-
-    data.forEach(function(elem) {
-      targets.push(elem.splice(target_index));
+  // Modifies data
+  separateTargets(data, targetIndex) {
+    return data.map((x) => {
+      return x.splice(targetIndex, 1);
     });
+  }
 
-    return mlTrainer.CalculateErrorRate(targets, this.classifier.predict(data));
+  trainModel(data, targetIndex) {
+    helpers.shuffle(data);
+    let targets = this.separateTargets(data, targetIndex);
+    return mlTrainer.trainDecisionTree(data, targets);
+  }
+
+  predict(data, targetIndex) {
+    let targets = this.separateTargets(data, targetIndex);
+    return mlTrainer.calculateMetrics(targets, this.classifier.predict(data));
+  }
+
+  view() {
+    return {
+      id: this.id,
+      name: this.name,
+      metrics: this.metrics,
+      projectId: this.projectId
+    };
   }
 }
 
