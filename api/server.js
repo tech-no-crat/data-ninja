@@ -21,7 +21,7 @@ app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const getModelsForProject = (projectId) => {
-  return models.filter((model) => model.projectId === projectId);
+  return models.filter((model) => model.project.id === projectId);
 }
 
 const viewProjectWithModels = (project) => {
@@ -32,6 +32,13 @@ const viewProjectWithModels = (project) => {
 
 app.get('/projects', (req, res) => {
   res.send(projects.map(viewProjectWithModels));
+});
+
+app.get('/projects/:id/models', (req, res) => {
+  let projectId = parseInt(req.params.id);
+  let project = projects[projectId]; 
+  if (!project) return helpers.error(res, `Project ${projectId} not found.`, 404);
+  res.send(getModelsForProject(projectId).map((m) => m.view()));
 });
 
 app.post('/projects', (req, res) => {
@@ -61,7 +68,7 @@ app.post('/projects/:id/models', (req, res) => {
   let target = req.body.target;
   let name = req.body.name;
 
-  if (!project) helpers.error(res, `Project ${projectId} not found.`, 404);
+  if (!project) return helpers.error(res, `Project ${projectId} not found.`, 404);
   if (!name || name === '') {
     return helpers.error(res, `Name is required but was not specified.`, 400);
   }
@@ -75,7 +82,7 @@ app.post('/projects/:id/models', (req, res) => {
     return helpers.error(res, `Feature ${target} does not exist in project.`, 400);
   }
 
-  let model = new Model(models.length, projectId, name, rawData, targetIndex);
+  let model = new Model(models.length, project, name, rawData, targetIndex);
   models.push(model);
 
   res.send(model.view());
@@ -90,8 +97,8 @@ var start = () => {
 }
 
 var populateWithDummyData = () => {
-  //projects.push(new Project(0, 'test model', '31uam.csv'));
-  //projects[0].init();
+  projects.push(new Project(0, 'test model', '31uam.csv'));
+  projects[0].init();
 }
 
 start();

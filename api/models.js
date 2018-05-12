@@ -166,11 +166,12 @@ class Project {
 }
 
 class Model {
-  constructor(id, projectId, name, data, target_index) {
+  constructor(id, project, name, data, targetIndex) {
     this.id = id;
-    this.projectId = projectId;
+    this.project = project;
+    this.targetIndex = targetIndex;
     this.name = name;
-    let {model, metrics} = this.trainModel(helpers.clone(data), target_index);
+    let {model, metrics} = this.trainModel(helpers.clone(data), targetIndex);
     this.model = model;
     this.metrics = metrics;
   }
@@ -198,7 +199,9 @@ class Model {
       id: this.id,
       name: this.name,
       metrics: this.metrics,
-      projectId: this.projectId
+      projectId: this.project.id,
+      target: this.project.dataSpec.featureNames[this.targetIndex],
+      task: 'classification'
     };
   }
 }
