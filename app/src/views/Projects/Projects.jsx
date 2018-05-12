@@ -13,6 +13,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 import TextField from 'material-ui/TextField';
 import Dialog, { DialogTitle } from 'material-ui/Dialog';
 import Button from 'material-ui/Button';
+import axios from 'axios';
 import Dropzone from 'react-dropzone'
 import AddIcon from '@material-ui/icons/Add';
 import ExpansionPanel, {
@@ -28,10 +29,39 @@ class Dashboard extends React.Component {
   state = {
     dialog: {
       open: false
-    }
+    },
+    dataset: null,
+    project_name: null,
   };
 
-  onDrop() {
+  onDrop = files => {
+    this.setState({dataset: files[0]});
+  }
+
+  handleNameChange = event => {
+    this.setState({project_name: event.target.value});
+  }
+
+  handleSubmit = async () => {
+    if (!this.state.dataset || !this.state.project_name) {
+      alert('Please provide project name and dataset.');
+      return;
+    }
+  
+    const formdata = new FormData();
+    formdata.append('data', this.state.dataset);
+    formdata.append('name', this.state.project_name);
+    try {
+      await axios.post(`http://localhost:3001/projects`, formdata, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      this.handleDialogClose();
+    } catch (e) {
+      alert(e);
+    }
   }
 
   handleModelClick = modelId => {
@@ -46,6 +76,8 @@ class Dashboard extends React.Component {
 
   openDialog = () => {
     const state = this.state;
+    state.dataset = null;
+    state.project_name = null;
     state.dialog.open = true;
     this.setState(state); 
   }
@@ -90,8 +122,8 @@ class Dashboard extends React.Component {
       <div>
         <Grid container>
           <ItemGrid xs={12} sm={12} md={12}>
-            {data.map(item => (
-              <ExpansionPanel>
+            {data.map((item, index) => (
+              <ExpansionPanel key={index}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>{item.name}</Typography>
                 </ExpansionPanelSummary>
@@ -144,13 +176,17 @@ class Dashboard extends React.Component {
               label="Project Name"
               fullWidth
               margin="normal"
+              onChange={this.handleNameChange}
             />
+            {this.state.dataset ? (
+              <p><strong>File:</strong> {this.state.dataset.name}</p>
+            ) : null}
             <div className={classes.dropzoneWrapper}>
               <Dropzone onDrop={this.onDrop.bind(this)} >
                 <p>Drop your CSV Dataset file here or click to select the file to upload.</p>
               </Dropzone>
             </div>
-            <Button variant="raised" color="primary" className={classes.submitButton}>
+            <Button variant="raised" color="primary" className={classes.submitButton} onClick={this.handleSubmit}>
               Create Project
             </Button>
           </div>
