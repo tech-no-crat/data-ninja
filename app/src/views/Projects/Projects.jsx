@@ -96,8 +96,9 @@ class Dashboard extends React.Component {
           ]
         }
       ];
-      if (JSON.stringify(data) !== JSON.stringify(this.state.projects)) {
-        this.setState({projects: dummyData.concat(data)});
+      const newData = dummyData.concat(data);
+      if (JSON.stringify(newData) !== JSON.stringify(this.state.projects)) {
+        this.setState({projects: newData});
       }
     } catch (e) {
     }
