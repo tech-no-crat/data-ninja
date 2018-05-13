@@ -204,6 +204,7 @@ class Dashboard extends React.Component {
                       <TableRow>
                         <TableCell>Model Name</TableCell>
                         <TableCell>Target Column</TableCell>
+                        <TableCell>Accuracy</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -211,6 +212,7 @@ class Dashboard extends React.Component {
                         <TableRow key={index} hover className={classes.modelRow} onClick={this.handleModelClick.bind(this, item.id)}>
                           <TableCell>{item.name}</TableCell>
                           <TableCell>{item.target}</TableCell>
+                          <TableCell>{(item.metrics.accuracy * 100).toFixed(2)}%</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
