@@ -230,6 +230,7 @@ class Dashboard extends React.Component {
                   <Typography className={classes.thirdHeading}>Sample: {item.size} examples</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
+                  {item.models.length ? (
                   <Table className={classes.table}>
                     <TableHead>
                       <TableRow>
@@ -245,7 +246,7 @@ class Dashboard extends React.Component {
                         </TableRow>
                       ))}
                     </TableBody>
-                  </Table>
+                  </Table>) : null}
                 </ExpansionPanelDetails>
                 <ExpansionPanelActions>
                   <Button size="small" color="primary" onClick={this.openModelDialog.bind(this, item.id, item.features)}>
