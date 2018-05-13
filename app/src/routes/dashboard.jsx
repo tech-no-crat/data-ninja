@@ -1,6 +1,5 @@
 import ProjectsPage from "views/Projects/Projects.jsx";
 import ModelsPage from "views/Models/Models.jsx";
-import UserProfile from "views/Dashboard/Dashboard.jsx";
 
 import {
   Extension,
@@ -20,7 +19,7 @@ const dashboardRoutes = [
     sidebarName: "Pricing",
     navbarName: "Pricing",
     icon: AttachMoney,
-    component: UserProfile
+    component: ProjectsPage
   },
   {
     path: "/models/:id",

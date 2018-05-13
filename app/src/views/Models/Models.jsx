@@ -8,6 +8,7 @@ import List, { ListItem, ListItemText } from 'material-ui/List';
 import Card, { CardContent } from 'material-ui/Card';
 import axios from 'axios';
 import Typography from 'material-ui/Typography';
+import Paper from 'material-ui/Paper';
 import Dropzone from 'react-dropzone'
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -22,6 +23,10 @@ import {
 const styles = {
   predictionColumn: {
     background: 'rgba(100, 100, 100, 0.1)',
+  },
+  tableWrapper: {
+    overflow: 'auto',
+    marginTop: '20px'
   },
   dropzoneWrapper: {
     marginTop: '20px',
@@ -40,42 +45,8 @@ const styles = {
 
 class Models extends React.Component {
   state = {
-    /*
-    data: {
-      "id": 0,
-      "name": "Churn",
-      "metrics": {
-        "total": 150,
-        "truePositives": 0,
-        "falsePositives": 0,
-        "trueNegatives": 150, 
-        "falseNegatives":0, 
-        "recall": 0.4482758620689655,
-        "precision": 0.34210526315789475,
-        "accuracy": 0.7266666666666667,
-      },
-      "projectId": 0,
-      "target": "Churn",
-      "task": "classification"
-    },
-    */
     data: null,
-    results: {
-      columns: ['column1', 'column2', 'Churn', 'column4'],
-      data: [
-        {
-          'column1': 'column1 data',
-          'column2': 352,
-          'Churn': 32,
-          'column4': 'other data',
-        },
-        {
-          'column1': 'column1 data',
-          'column2': 352, 'Churn': 32,
-          'column4': 'other data',
-        }
-      ]
-    }
+    results: null,
   };
 
   async componentDidMount() {
@@ -91,11 +62,13 @@ class Models extends React.Component {
     formdata.append('data', files[0]);
     formdata.append('threshold', 53);
     try {
-      await axios.post(`/models/${modelID}`, formdata, {
+      const { data } = await axios.post(`http://localhost:3001/models/${modelID}`, formdata, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
+
+      this.setState({results: data});
     } catch (e) {
       alert(e);
     }
@@ -120,7 +93,7 @@ class Models extends React.Component {
                       <ListItemText primary="Type" secondary={this.state.data.task} />
                     </ListItem>
                     <ListItem>
-                      <ListItemText primary="Date" secondary="12 May 2018" />
+                      <ListItemText primary="Date" secondary="13 May 2018" />
                     </ListItem>
                     <ListItem>
                       <ListItemText primary="Target Column" secondary={this.state.data.target} />
@@ -205,30 +178,32 @@ class Models extends React.Component {
               Results
             </Typography>
 
-            <Table className={classes.resultsTable}>
-              <TableHead>
-                <TableRow>
-                  {this.state.results.columns.map((column, index) => (
-                    <TableCell
-                      className={column === this.state.data.target ? classes.predictionColumn : ''}
-                      key={index}
-                    >{column}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {this.state.results.data.map((item, index) => (
-                  <TableRow key={index}>
+            <Paper className={classes.tableWrapper}>
+              <Table className={classes.resultsTable}>
+                <TableHead>
+                  <TableRow>
                     {this.state.results.columns.map((column, index) => (
                       <TableCell
                         className={column === this.state.data.target ? classes.predictionColumn : ''}
                         key={index}
-                      >{item[column]}</TableCell>
+                      >{column}</TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                  {this.state.results.data.map((item, index) => (
+                    <TableRow key={index}>
+                      {this.state.results.columns.map((column, index) => (
+                        <TableCell
+                          className={column === this.state.data.target ? classes.predictionColumn : ''}
+                          key={index}
+                        >{item[column]}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
           </CardContent>
         </Card>
         ) : null}
