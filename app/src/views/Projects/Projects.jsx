@@ -41,7 +41,7 @@ class Dashboard extends React.Component {
     dataset: null,
     project_name: null,
     model_name: null,
-    projects: null,
+    projects: [],
   };
 
   componentWillUnmount() {
@@ -50,7 +50,8 @@ class Dashboard extends React.Component {
 
   async fetchData() {
     try {
-      const { data } = await axios.get('http://localhost:3001/projects');
+      const hostname = window.location.hostname;
+      const { data } = await axios.get(`http://${hostname}:3001/projects`);
       if (JSON.stringify(data) !== JSON.stringify(this.state.projects)) {
         this.setState({projects: data});
       }
@@ -110,7 +111,8 @@ class Dashboard extends React.Component {
     formdata.append('name', this.state.model_name);
     formdata.append('target', this.state.featuresMenu.selected);
     try {
-      await axios.post(`http://localhost:3001/projects/${this.state.modelDialog.project_id}/models`, formdata, {
+      const hostname = window.location.hostname;
+      await axios.post(`http://${hostname}:3001/projects/${this.state.modelDialog.project_id}/models`, formdata, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -132,7 +134,8 @@ class Dashboard extends React.Component {
     formdata.append('data', this.state.dataset);
     formdata.append('name', this.state.project_name);
     try {
-      await axios.post(`http://localhost:3001/projects`, formdata, {
+      const hostname = window.location.hostname;
+      await axios.post(`http://${hostname}:3001/projects`, formdata, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -181,42 +184,7 @@ class Dashboard extends React.Component {
   render() {
     const { classes } = this.props;
 
-    const data = this.state.projects || [
-     {
-       name: 'What\'s UP Client Retention',
-       id: 11,
-       features: ['foo1', 'bar2', 'a column'],
-       models: [
-        {
-          name: 'Model 1',
-          id: 1,
-          target: 'Dropoff',
-        },
-        {
-          name: 'Model 2',
-          id: 2,
-          target: 'Renew Subscription',
-        }
-       ]
-     },
-     {
-       name: 'Cosmote 500MB Campaign',
-       id: 22,
-       features: ['foo1', 'bar2', 'a column'],
-       models: [
-        {
-          name: 'Model 1',
-          id: 3,
-          target: 'CTR',
-        },
-        {
-          name: 'Model 2',
-          id: 4,
-          target: 'Conversion Rate'
-        }
-       ]
-     }
-    ];
+    const data = this.state.projects;
 
     return (
       <div>

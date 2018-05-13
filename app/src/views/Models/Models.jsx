@@ -52,7 +52,8 @@ class Models extends React.Component {
   async componentDidMount() {
     const modelID = this.props.match.params.id;
 
-    const { data } = await axios.get(`http://localhost:3001/models/${modelID}`);
+    const hostname = window.location.hostname;
+    const { data } = await axios.get(`http://${hostname}:3001/models/${modelID}`);
     this.setState({data});
   }
 
@@ -62,7 +63,8 @@ class Models extends React.Component {
     formdata.append('data', files[0]);
     formdata.append('threshold', 53);
     try {
-      const { data } = await axios.post(`http://localhost:3001/models/${modelID}`, formdata, {
+      const hostname = window.location.hostname;
+      const { data } = await axios.post(`http://${hostname}:3001/models/${modelID}`, formdata, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
