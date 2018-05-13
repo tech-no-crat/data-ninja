@@ -140,30 +140,6 @@ class Models extends React.Component {
                         </ListItem>
                       </List>
                     </ItemGrid>
-                    <ItemGrid xs={12} sm={12} md={12}>
-                      <Table className={classes.table}>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Column</TableCell>
-                            <TableCell>Contribution Level</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          <TableRow hover className={classes.modelRow}>
-                            <TableCell>column1</TableCell>
-                            <TableCell>high</TableCell>
-                          </TableRow>
-                          <TableRow hover className={classes.modelRow}>
-                            <TableCell>column2</TableCell>
-                            <TableCell>low</TableCell>
-                          </TableRow>
-                          <TableRow hover className={classes.modelRow}>
-                            <TableCell>column1</TableCell>
-                            <TableCell>high</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </ItemGrid>
                   </Grid>
                 </ExpansionPanelDetails>
               </ExpansionPanel>
