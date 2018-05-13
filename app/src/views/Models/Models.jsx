@@ -47,15 +47,16 @@ class Models extends React.Component {
         "falsePositives": 0,
         "trueNegatives": 150, 
         "falseNegatives":0, 
-        "recall": null,
-        "precision": null,
-        "accuracy": 1
+        "recall": 0.4482758620689655,
+        "precision": 0.34210526315789475,
+        "accuracy": 0.7266666666666667,
       },
       "projectId": 0,
       "target": "Churn",
       "task": "classification"
     },
     */
+    data: null,
     results: {
       columns: ['column1', 'column2', 'column3', 'column4'],
       data: [
@@ -109,17 +110,34 @@ class Models extends React.Component {
           cardSubtitle="Model details"
           content={
             <div>
-              <List>
-                <ListItem>
-                  <ListItemText primary="Type" secondary={this.state.data.task} />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Date" secondary="12 May 2018" />
-                </ListItem>
-                <ListItem>
-                  <ListItemText primary="Target Column" secondary={this.state.data.target} />
-                </ListItem>
-              </List>
+              <Grid container>
+                <ItemGrid xs={6} sm={6} md={6}>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary="Type" secondary={this.state.data.task} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText primary="Date" secondary="12 May 2018" />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText primary="Target Column" secondary={this.state.data.target} />
+                    </ListItem>
+                  </List>
+                </ItemGrid>
+                <ItemGrid xs={6} sm={6} md={6}>
+                  <List>
+                    <ListItem>
+                      <ListItemText primary="Precision" secondary={(this.state.data.metrics.precision * 100).toFixed(2) + '%'} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText primary="Recall" secondary={(this.state.data.metrics.recall * 100).toFixed(2) + '%'} />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText primary="Accuracy" secondary={(this.state.data.metrics.accuracy * 100).toFixed(2) + '%'} />
+                    </ListItem>
+                  </List>
+                </ItemGrid>
+              </Grid>
               <ExpansionPanel>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography>Advanced Options</Typography>
