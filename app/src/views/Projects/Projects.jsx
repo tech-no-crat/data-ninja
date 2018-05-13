@@ -70,11 +70,11 @@ class Dashboard extends React.Component {
         {
           name: 'Loans',
           id: -1,
-          size: 674,
+          size: 500,
           models: [
             {
-              name: 'Survival',
-              target: 'suvived',
+              name: 'Default model',
+              target: 'default',
               metrics: {
                 accuracy: 0.78537
               }
@@ -84,11 +84,11 @@ class Dashboard extends React.Component {
         {
           name: 'Promotion campaign',
           id: -1,
-          size: 674,
+          size: 890,
           models: [
             {
-              name: 'Survival',
-              target: 'suvived',
+              name: 'Response model',
+              target: 'response',
               metrics: {
                 accuracy: 0.75379
               }
