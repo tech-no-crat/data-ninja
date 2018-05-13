@@ -30,7 +30,7 @@ const dashboardRoutes = [
     component: ModelsPage,
     hidden: true,
   },
-  { redirect: true, path: "/", to: "/projects", navbarName: "Redirect" }
+  { redirect: true, path: "/", to: "/projects", navbarName: "Models" }
 ];
 
 export default dashboardRoutes;
