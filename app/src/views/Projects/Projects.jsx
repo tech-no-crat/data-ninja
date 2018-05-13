@@ -227,8 +227,10 @@ class Dashboard extends React.Component {
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>{item.name}</Typography>
                   <Typography className={classes.secondaryHeading}>Models: {item.models.length}</Typography>
+                  <Typography className={classes.thirdHeading}>Sample: {item.size} examples</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
+                  {item.models.length ? (
                   <Table className={classes.table}>
                     <TableHead>
                       <TableRow>
@@ -244,7 +246,7 @@ class Dashboard extends React.Component {
                         </TableRow>
                       ))}
                     </TableBody>
-                  </Table>
+                  </Table>) : null}
                 </ExpansionPanelDetails>
                 <ExpansionPanelActions>
                   <Button size="small" color="primary" onClick={this.openModelDialog.bind(this, item.id, item.features)}>
