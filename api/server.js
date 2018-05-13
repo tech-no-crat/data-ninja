@@ -122,7 +122,7 @@ app.post('/models/:id', (req, res) => {
       columns: observedDataSpec.featureNames.concat([model.target]),
       data: observedDataSpec.data.map((row, rowIndex) => {
         let rowObj = {};
-        rowObj[model.target] = predictions[rowIndex];
+        rowObj[model.target] = model.project.dataSpec.featureSpecs[model.target].decode(predictions[rowIndex]);
         row.forEach((value, columnIndex) => {
           rowObj[observedDataSpec.featureNames[columnIndex]] = value;
         });

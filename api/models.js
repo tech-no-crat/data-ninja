@@ -61,6 +61,19 @@ class FeatureSpec {
     });
   }
 
+  decode(value) {
+    console.log(this.type);
+    if (this.type === 'double') {
+      // TODO
+      throw new Error('Can not decode non-string feature values.');
+    } else {
+      for (let tuple of this.vocab) {
+        if (value === tuple[1]) return tuple[0];
+      }
+      return config.unknownValueToken;
+    }
+  }
+
   // Returns 'float' if enough of the values look like floats
   // or 'string' otherwise.
   findDominantType() {

@@ -1,5 +1,6 @@
 {
   "datasetsPath": "./data/datasets",
   "dominantDataTypeThreshold": 0.8,
-  "testSetPart": 0.3
+  "testSetPart": 0.3,
+  "unknownValueToken": "<UNKNOWN>"
 }
