@@ -177,7 +177,7 @@ class Model {
   // Modifies data
   separateTargets(data, targetIndex) {
     return data.map((x) => {
-      return x.splice(targetIndex, 1);
+      return x.splice(targetIndex, 1)[0];
     });
   }
 
