@@ -45,16 +45,27 @@ class Dashboard extends React.Component {
   };
 
   componentWillUnmount() {
-    clearInterval(this.fetchDataInterval);
+    this.unmount = true;
+  }
+
+  async fetchData() {
+    try {
+      const { data } = await axios.get('http://localhost:3001/projects');
+      if (JSON.stringify(data) !== JSON.stringify(this.state.projects)) {
+        this.setState({projects: data});
+      }
+    } catch (e) {
+    }
+
+    setTimeout(() => {
+      if (!this.unmount) {
+        this.fetchData();
+      }
+    }, 2000);
   }
 
   componentDidMount() {
-    this.fetchDataInterval = setInterval(async () => {
-      const { data } = await axios.get('http://localhost:3001/projects');
-      if (JSON.stringify(data) !== JSON.stringify(this.state.projects) && data.length) {
-        this.setState({projects: data});
-      }
-    }, 2000);
+    this.fetchData();
   }
 
   handleFeaturesOption = value => {
@@ -99,7 +110,7 @@ class Dashboard extends React.Component {
     formdata.append('name', this.state.model_name);
     formdata.append('target', this.state.featuresMenu.selected);
     try {
-      await axios.post(`http://localhost:3001/project/${this.state.modelDialog.project_id}/models`, formdata, {
+      await axios.post(`http://localhost:3001/projects/${this.state.modelDialog.project_id}/models`, formdata, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -174,36 +185,34 @@ class Dashboard extends React.Component {
      {
        name: 'What\'s UP Client Retention',
        id: 11,
-       models_count: 1,
        features: ['foo1', 'bar2', 'a column'],
        models: [
         {
           name: 'Model 1',
           id: 1,
-          column: 'Dropoff',
+          target: 'Dropoff',
         },
         {
           name: 'Model 2',
           id: 2,
-          column: 'Renew Subscription',
+          target: 'Renew Subscription',
         }
        ]
      },
      {
        name: 'Cosmote 500MB Campaign',
        id: 22,
-       models_count: 2,
        features: ['foo1', 'bar2', 'a column'],
        models: [
         {
           name: 'Model 1',
           id: 3,
-          column: 'CTR',
+          target: 'CTR',
         },
         {
           name: 'Model 2',
           id: 4,
-          column: 'Conversion Rate'
+          target: 'Conversion Rate'
         }
        ]
      }
@@ -217,7 +226,7 @@ class Dashboard extends React.Component {
               <ExpansionPanel key={index}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>{item.name}</Typography>
-                  <Typography className={classes.secondaryHeading}>Models: {item.models_count}</Typography>
+                  <Typography className={classes.secondaryHeading}>Models: {item.models.length}</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Table className={classes.table}>
@@ -231,7 +240,7 @@ class Dashboard extends React.Component {
                       {item.models.map((item, index) => (
                         <TableRow key={index} hover className={classes.modelRow} onClick={this.handleModelClick.bind(this, item.id)}>
                           <TableCell>{item.name}</TableCell>
-                          <TableCell>{item.column}</TableCell>
+                          <TableCell>{item.target}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

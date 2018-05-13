@@ -21,15 +21,32 @@ app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 const getModelsForProject = (projectId) => {
-  return models.filter((model) => model.projectId === projectId);
+  return models.filter((model) => model.project.id === projectId);
 }
 
+const viewProjectWithModels = (project) => {
+  let ret = project.view();
+  ret.models = getModelsForProject(project.id).map((m) => m.view());
+  return ret;
+};
+
 app.get('/projects', (req, res) => {
-  res.send(projects.map((p) => {
-    let ret = p.view();
-    ret.models = getModelsForProject(p.id).map((m) => m.view());
-    return ret;
-  }));
+  res.send(projects.map(viewProjectWithModels));
+});
+
+app.get('/models/:id', (req, res) => {
+  let modelId = parseInt(req.params.id);
+  let model = projects[modelId]; 
+  if (!model) return helpers.error(res, `Model ${modelId} not found.`, 404);
+
+  res.send(model.view());
+});
+
+app.get('/projects/:id/models', (req, res) => {
+  let projectId = parseInt(req.params.id);
+  let project = projects[projectId]; 
+  if (!project) return helpers.error(res, `Project ${projectId} not found.`, 404);
+  res.send(getModelsForProject(projectId).map((m) => m.view()));
 });
 
 app.post('/projects', (req, res) => {
@@ -43,13 +60,14 @@ app.post('/projects', (req, res) => {
   }
 
   let fileName = helpers.randomString(5) + '.csv';
-  req.files.data.mv(path.join(config.datasetsPath, fileName)).then(() => {
-    let project = new Project(projects.length, name, fileName);
+  let fullPath = path.join(config.datasetsPath, fileName);
+  req.files.data.mv(fullPath).then(() => {
+    let project = new Project(projects.length, name, fullPath);
     project.init();
     projects.push(project);
 
     console.log(`Added project ${project.id} with name ${project.name}!`);
-    res.send("OK");
+    res.send(viewProjectWithModels(project));
   }).catch((e) => helpers.error(res, e, 500));
 });
 
@@ -59,7 +77,7 @@ app.post('/projects/:id/models', (req, res) => {
   let target = req.body.target;
   let name = req.body.name;
 
-  if (!project) helpers.error(res, `Project ${projectId} not found.`, 404);
+  if (!project) return helpers.error(res, `Project ${projectId} not found.`, 404);
   if (!name || name === '') {
     return helpers.error(res, `Name is required but was not specified.`, 400);
   }
@@ -67,13 +85,12 @@ app.post('/projects/:id/models', (req, res) => {
     return helpers.error(res, `Target is required but was not specified.`, 400);
   }
 
-  let rawData = project.getRawData();
   let targetIndex = project.getFeatureIndex(target);
   if (targetIndex < 0) {
     return helpers.error(res, `Feature ${target} does not exist in project.`, 400);
   }
 
-  let model = new Model(models.length, projectId, name, rawData, targetIndex);
+  let model = new Model(models.length, project, name, target);
   models.push(model);
 
   res.send(model.view());
@@ -88,8 +105,6 @@ var start = () => {
 }
 
 var populateWithDummyData = () => {
-  //projects.push(new Project(0, 'test model', '31uam.csv'));
-  //projects[0].init();
 }
 
 start();

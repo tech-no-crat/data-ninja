@@ -16,9 +16,9 @@ function partitionData(data, target) {
 	let trainingSet = data.slice(0, randomIndex).concat(
 		data.slice(testEndIndex, data.length));
 
-	let testPredictions = target.slice(randomIndex, testEndIndex);
+	let testPredictions = target.slice(randomIndex, testEndIndex).map((x) => x[0]);
 	let trainingPredictions = target.slice(0, randomIndex).concat(
-		data.slice(testEndIndex, data.length));
+		data.slice(testEndIndex, data.length)).map((x) => x[0]);
 
 	return [trainingSet, trainingPredictions, testSet, testPredictions];
 }
@@ -36,6 +36,7 @@ function optimiseParameters(data, target) {
 	let minNumSamples = [3, 4, 5];
 
 	let f1Score = 0;
+	// Best classifier with its metrics.
 	var classifier, metrics;
 
 	for (let depth of depths) {
@@ -51,13 +52,10 @@ function optimiseParameters(data, target) {
 			};
 
 			let curClassifier = new mlcart.DecisionTreeClassifier(options);
-
 			curClassifier.train(trainingSet, trainingPredictions);
-
+			
 			let result = curClassifier.predict(testSet);
-
 			let curMetrics = calculateMetrics(testPredictions, result);
-
 			let curF1Score = computeF1Score(curMetrics);
 
 			if (curF1Score >= f1Score) {
@@ -72,7 +70,6 @@ function optimiseParameters(data, target) {
 
 var trainDecisionTree = (data, target) => {
 	// Optimiser returns the best model.
-	console.log()
 	return optimiseParameters(data, target);
 };
 
