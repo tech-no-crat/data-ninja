@@ -97,8 +97,6 @@ var start = () => {
 }
 
 var populateWithDummyData = () => {
-  projects.push(new Project(0, 'test model', '31uam.csv'));
-  projects[0].init();
 }
 
 start();

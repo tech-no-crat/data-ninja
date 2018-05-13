@@ -45,16 +45,27 @@ class Dashboard extends React.Component {
   };
 
   componentWillUnmount() {
-    clearInterval(this.fetchDataInterval);
+    this.unmount = true;
+  }
+
+  async fetchData() {
+    try {
+      const { data } = await axios.get('http://localhost:3001/projects');
+      if (JSON.stringify(data) !== JSON.stringify(this.state.projects)) {
+        this.setState({projects: data});
+      }
+    } catch (e) {
+    }
+
+    setTimeout(() => {
+      if (!this.unmount) {
+        this.fetchData();
+      }
+    }, 2000);
   }
 
   componentDidMount() {
-    this.fetchDataInterval = setInterval(async () => {
-      const { data } = await axios.get('http://localhost:3001/projects');
-      if (JSON.stringify(data) !== JSON.stringify(this.state.projects) && data.length) {
-        this.setState({projects: data});
-      }
-    }, 2000);
+    this.fetchData();
   }
 
   handleFeaturesOption = value => {
@@ -174,7 +185,6 @@ class Dashboard extends React.Component {
      {
        name: 'What\'s UP Client Retention',
        id: 11,
-       models_count: 1,
        features: ['foo1', 'bar2', 'a column'],
        models: [
         {
@@ -192,7 +202,6 @@ class Dashboard extends React.Component {
      {
        name: 'Cosmote 500MB Campaign',
        id: 22,
-       models_count: 2,
        features: ['foo1', 'bar2', 'a column'],
        models: [
         {
@@ -217,7 +226,7 @@ class Dashboard extends React.Component {
               <ExpansionPanel key={index}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.heading}>{item.name}</Typography>
-                  <Typography className={classes.secondaryHeading}>Models: {item.models_count}</Typography>
+                  <Typography className={classes.secondaryHeading}>Models: {item.models.length}</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                   <Table className={classes.table}>
