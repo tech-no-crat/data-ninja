@@ -52,8 +52,52 @@ class Dashboard extends React.Component {
     try {
       const hostname = window.location.hostname;
       const { data } = await axios.get(`http://${hostname}:3001/projects`);
+      const dummyData = [
+        {
+          name: 'Titanic',
+          id: -1,
+          size: 674,
+          models: [
+            {
+              name: 'Survival',
+              target: 'suvived',
+              metrics: {
+                accuracy: 0.9333
+              }
+            }
+          ]
+        },
+        {
+          name: 'Loans',
+          id: -1,
+          size: 674,
+          models: [
+            {
+              name: 'Survival',
+              target: 'suvived',
+              metrics: {
+                accuracy: 0.78537
+              }
+            }
+          ]
+        },
+        {
+          name: 'Promotion campaign',
+          id: -1,
+          size: 674,
+          models: [
+            {
+              name: 'Survival',
+              target: 'suvived',
+              metrics: {
+                accuracy: 0.75379
+              }
+            }
+          ]
+        }
+      ];
       if (JSON.stringify(data) !== JSON.stringify(this.state.projects)) {
-        this.setState({projects: data});
+        this.setState({projects: dummyData.concat(data)});
       }
     } catch (e) {
     }
