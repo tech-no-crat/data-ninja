@@ -29,6 +29,11 @@ const dashboardStyle = {
     flexBasis: '33.33%',
     flexShrink: 0,
   },
+  thirdHeading: {
+    flexBasis: '33.33%',
+    flexShrink: 0,
+    color: '#888',
+  },
   table: {
     minWidth: '100%'
   },
@@ -38,6 +43,8 @@ const dashboardStyle = {
     textTransform: 'none'
   },
   secondaryHeading: {
+    flexBasis: '33.33%',
+    flexShrink: 0,
     color: '#888',
   },
   dialogContent: {
