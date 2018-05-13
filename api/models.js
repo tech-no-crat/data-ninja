@@ -206,8 +206,8 @@ class Model {
     this.project = project;
     this.target = target;
     this.name = name;
-    let {model, metrics} = this.trainModel();
-    this.model = model;
+    let {classifier, metrics} = this.trainModel();
+    this.classifier = classifier;
     this.metrics = metrics;
   }
 
@@ -230,9 +230,9 @@ class Model {
     return mlTrainer.trainDecisionTree(data, targets);
   }
 
-  predict(data, targetIndex) {
-    let targets = this.separateTargets(data, targetIndex);
-    return mlTrainer.calculateMetrics(targets, this.classifier.predict(data));
+  predict(data) {
+    let targetIndex = this.project.getFeatureIndex(this.target);
+    return this.classifier.predict(data);
   }
 
   view() {

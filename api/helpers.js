@@ -35,5 +35,15 @@ module.exports = {
 			[a[i], a[j]] = [a[j], a[i]];
 		}
 		return a;
+  },
+
+  remove: (arr, elem) => {
+    let next = [];
+    arr.forEach((x) => {
+      if (x !== elem) {
+        next.push(x)
+      }
+    });
+    return next;
   }
 }

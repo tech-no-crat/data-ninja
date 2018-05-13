@@ -2,10 +2,12 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
 const path = require('path');
+const parse = require('csv-parse/lib/sync');
+const fs = require('fs');
 
 const config = require('./config');
 const helpers = require('./helpers');
-const {Model, Project} = require('./models');
+const {Model, Project, DataSpec, FeatureSpec} = require('./models');
 
 const projects = [];
 const models = [];
@@ -32,14 +34,6 @@ const viewProjectWithModels = (project) => {
 
 app.get('/projects', (req, res) => {
   res.send(projects.map(viewProjectWithModels));
-});
-
-app.get('/models/:id', (req, res) => {
-  let modelId = parseInt(req.params.id);
-  let model = projects[modelId]; 
-  if (!model) return helpers.error(res, `Model ${modelId} not found.`, 404);
-
-  res.send(model.view());
 });
 
 app.get('/projects/:id/models', (req, res) => {
@@ -94,6 +88,50 @@ app.post('/projects/:id/models', (req, res) => {
   models.push(model);
 
   res.send(model.view());
+});
+
+app.get('/models/:id', (req, res) => {
+  let modelId = parseInt(req.params.id);
+  let model = models[modelId]; 
+  if (!model) return helpers.error(res, `Model ${modelId} not found.`, 404);
+
+  res.send(model.view());
+});
+
+app.post('/models/:id', (req, res) => {
+  let modelId = parseInt(req.params.id);
+  let model = models[modelId]; 
+  if (!model) return helpers.error(res, `Model ${modelId} not found.`, 404);
+
+  let fileName = helpers.randomString(5) + '.csv';
+  let fullPath = path.join(config.datasetsPath, fileName);
+  req.files.data.mv(fullPath).then(() => {
+    let observedDataSpec = new DataSpec(parse(fs.readFileSync(fullPath)));
+    console.log(JSON.stringify(observedDataSpec.featureNames));
+    console.log(JSON.stringify(helpers.remove(model.project.dataSpec.featureNames, model.target)));
+    if (JSON.stringify(observedDataSpec.featureNames)
+        !== JSON.stringify(helpers.remove(model.project.dataSpec.featureNames, model.target))) {
+      return helpers.error(res, 'The data to be classified must contain exactly all the columns of ' +
+          'the training dataset except the target label. The column names in the header must also ' +
+          'match and be in the right order.');
+    }
+    // TODO: Do more data spec checks here.
+
+    let predictions = model.predict(model.project.dataSpec.normalize(observedDataSpec.data));
+    let ret = {
+      columns: observedDataSpec.featureNames.concat([model.target]),
+      data: observedDataSpec.data.map((row, rowIndex) => {
+        let rowObj = {};
+        rowObj[model.target] = predictions[rowIndex];
+        row.forEach((value, columnIndex) => {
+          rowObj[observedDataSpec.featureNames[columnIndex]] = value;
+        });
+        return rowObj;
+      })
+    };
+
+    res.send(ret);
+  }).catch((e) => helpers.error(res, e, 500));
 });
 
 var start = () => {
