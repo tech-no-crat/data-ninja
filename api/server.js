@@ -52,8 +52,9 @@ app.post('/projects', (req, res) => {
   }
 
   let fileName = helpers.randomString(5) + '.csv';
-  req.files.data.mv(path.join(config.datasetsPath, fileName)).then(() => {
-    let project = new Project(projects.length, name, fileName);
+  let fullPath = path.join(config.datasetsPath, fileName);
+  req.files.data.mv(fullPath).then(() => {
+    let project = new Project(projects.length, name, fullPath);
     project.init();
     projects.push(project);
 
@@ -76,13 +77,12 @@ app.post('/projects/:id/models', (req, res) => {
     return helpers.error(res, `Target is required but was not specified.`, 400);
   }
 
-  let rawData = project.getRawData();
   let targetIndex = project.getFeatureIndex(target);
   if (targetIndex < 0) {
     return helpers.error(res, `Feature ${target} does not exist in project.`, 400);
   }
 
-  let model = new Model(models.length, project, name, rawData, targetIndex);
+  let model = new Model(models.length, project, name, target);
   models.push(model);
 
   res.send(model.view());

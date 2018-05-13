@@ -8,8 +8,8 @@ var trainDecisionTree = (data, target) => {
 	testSet = data.slice(0, test_index);
 	trainingSet = data.slice(test_index, data.length);
 
-	testPredictions = target.slice(0, test_index);
-	trainingPredictions = target.slice(test_index, target.length);
+	testPredictions = target.slice(0, test_index).map((x) => x[0]);
+	trainingPredictions = target.slice(test_index, target.length).map((x) => x[0]);
 
 	// TODO: optimise input parameters.
 	var options = {

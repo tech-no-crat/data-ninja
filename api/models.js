@@ -19,6 +19,23 @@ class FeatureSpec {
     }
   }
 
+  view() {
+    let ret = {
+      type: this.type,
+      missingCount: this.missingCount,
+    }
+
+    if (this.type === 'string') {
+      ret.vocabSize = this.vocabSize;
+    } else {
+      ret.min = this.min;
+      ret.max = this.max;
+      ret.median = this.median;
+    }
+
+    return ret;
+  }
+
   generateFloatSpec() {
     this.missingCount = this.values.filter((x) => isNaN(parseFloat(x))).length
     this.min = this.values.reduce((acc, x) => (x < acc) ? x : acc);
@@ -47,9 +64,17 @@ class FeatureSpec {
   // Returns 'float' if enough of the values look like floats
   // or 'string' otherwise.
   findDominantType() {
+    let hasLetters = (str) => {
+      for (let i = 0; i < str.length; i++) {
+        if (str[i] >= 'a' && str[i] <= 'z' || str[i] >= 'A' && str[i] <= 'Z') return true;
+      }
+      return false;
+    }
     // TODO: Think more about what's a float, e.g. edge cases like "23abc"
     // We consider empty strings as floats, since they can be missing data.
-    let isFloat = (x) => x === '' || !isNaN(parseFloat(x));
+    let isFloat = (x) =>
+      (x === '' || !isNaN(parseFloat(x)) && !hasLetters(x)
+    );
     let floatCount = this.values.filter(isFloat).length;
 
     if (floatCount/this.values.length >= config.dominantDataTypeThreshold) {
@@ -103,10 +128,18 @@ class DataSpec {
           + ' columns in each row');
     }
 
-    this.featureSpecs = [];
+    this.featureSpecs = {};
     for (let featureName of this.featureNames) {
       this.featureSpecs[featureName] = new FeatureSpec(this.featureValues(featureName));
     }
+  }
+
+  view() {
+    let ret = {};
+    this.featureNames.forEach((feature) => {
+      ret[feature] = this.featureSpecs[feature].view();
+    });
+    return ret;
   }
 
   featureValues(featureName) {
@@ -133,13 +166,9 @@ class Project {
     this.dataSpec = null;
   }
 
-  fullPath() {
-    return path.join(config.datasetsPath, this.filePath);
-  }
-
   // Returns a 2D array with the CSV data as strings
   readData() {
-    return parse(fs.readFileSync(this.fullPath()));
+    return parse(fs.readFileSync(this.filePath));
   }
 
   // Reads data and generates stats
@@ -152,6 +181,10 @@ class Project {
     return this.dataSpec.data;
   }
 
+  getNormalizedData() {
+    return this.dataSpec.normalize(this.getRawData());
+  }
+
   getFeatureIndex(featureName) {
     return this.dataSpec.featureNames.indexOf(featureName);
   }
@@ -160,18 +193,20 @@ class Project {
     return {
       id: this.id,
       name: this.name,
-      features: this.dataSpec.featureNames
+      features: this.dataSpec.featureNames,
+      featureSpec: this.dataSpec.view(),
+      size: this.dataSpec.data.length
     };
   }
 }
 
 class Model {
-  constructor(id, project, name, data, targetIndex) {
+  constructor(id, project, name, target) {
     this.id = id;
     this.project = project;
-    this.targetIndex = targetIndex;
+    this.target = target;
     this.name = name;
-    let {model, metrics} = this.trainModel(helpers.clone(data), targetIndex);
+    let {model, metrics} = this.trainModel();
     this.model = model;
     this.metrics = metrics;
   }
@@ -183,9 +218,15 @@ class Model {
     });
   }
 
-  trainModel(data, targetIndex) {
+  trainModel() {
+    let data = this.project.getNormalizedData();
+    let targetIndex = this.project.getFeatureIndex(this.target);
     helpers.shuffle(data);
     let targets = this.separateTargets(data, targetIndex);
+    if (this.targetIndex < 0) {
+      throw new Error('Target feature not found.');
+    }
+
     return mlTrainer.trainDecisionTree(data, targets);
   }
 
@@ -200,7 +241,7 @@ class Model {
       name: this.name,
       metrics: this.metrics,
       projectId: this.project.id,
-      target: this.project.dataSpec.featureNames[this.targetIndex],
+      target: this.target,
       task: 'classification'
     };
   }
