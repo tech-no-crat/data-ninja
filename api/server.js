@@ -34,6 +34,14 @@ app.get('/projects', (req, res) => {
   res.send(projects.map(viewProjectWithModels));
 });
 
+app.get('/models/:id', (req, res) => {
+  let modelId = parseInt(req.params.id);
+  let model = projects[modelId]; 
+  if (!model) return helpers.error(res, `Model ${modelId} not found.`, 404);
+
+  res.send(model.view());
+});
+
 app.get('/projects/:id/models', (req, res) => {
   let projectId = parseInt(req.params.id);
   let project = projects[projectId]; 
