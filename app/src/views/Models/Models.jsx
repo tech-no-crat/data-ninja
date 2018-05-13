@@ -20,6 +20,9 @@ import {
 } from "components";
 
 const styles = {
+  predictionColumn: {
+    background: 'rgba(100, 100, 100, 0.1)',
+  },
   dropzoneWrapper: {
     marginTop: '20px',
     '& > div': {
@@ -58,17 +61,17 @@ class Models extends React.Component {
     */
     data: null,
     results: {
-      columns: ['column1', 'column2', 'column3', 'column4'],
+      columns: ['column1', 'column2', 'Churn', 'column4'],
       data: [
         {
           'column1': 'column1 data',
           'column2': 352,
-          'column3': 32,
+          'Churn': 32,
           'column4': 'other data',
         },
         {
           'column1': 'column1 data',
-          'column2': 352, 'column3': 32,
+          'column2': 352, 'Churn': 32,
           'column4': 'other data',
         }
       ]
@@ -206,7 +209,10 @@ class Models extends React.Component {
               <TableHead>
                 <TableRow>
                   {this.state.results.columns.map((column, index) => (
-                    <TableCell key={index}>{column}</TableCell>
+                    <TableCell
+                      className={column === this.state.data.target ? classes.predictionColumn : ''}
+                      key={index}
+                    >{column}</TableCell>
                   ))}
                 </TableRow>
               </TableHead>
@@ -214,7 +220,10 @@ class Models extends React.Component {
                 {this.state.results.data.map((item, index) => (
                   <TableRow key={index}>
                     {this.state.results.columns.map((column, index) => (
-                      <TableCell key={index}>{item[column]}</TableCell>
+                      <TableCell
+                        className={column === this.state.data.target ? classes.predictionColumn : ''}
+                        key={index}
+                      >{item[column]}</TableCell>
                     ))}
                   </TableRow>
                 ))}
